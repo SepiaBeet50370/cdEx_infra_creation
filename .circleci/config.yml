@@ -21,9 +21,63 @@ jobs:
               --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} \
               --region us-east-1
 
+#add if statement here later
+
+  create_inv_file:
+    docker:
+      - image: python:3.7-alpine3.11
+    steps:
+      - run:
+          name: Create inventory file
+          command: echo "[all]" > inventory_files/inventory.txt
+
+  append_inv_file:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - run: 
+            name: Append inventory file
+            command: |
+              aws ec2 describe-instances
+                --query 'Reservations[*].Instances[*].PublicIpAddress'
+                --output text >> inventory_files/inventory.txt
+      # - save_cache:
+      #     key: "inventory file"
+      #     paths:
+      #       - inventory_files
+
+  configure_infrastructure: 
+    docker:
+      - image: python:3.7-alpine3.11
+    steps:
+      - checkout
+      # - restore_cache:
+      #     keys: 
+      #       - "inventory file"
+      - add_ssh_keys:
+          fingerprints: ["a7:2e:c8:cb:eb:a0:8e:23:32:36:bc:c5:cc:eb:3d:96"] # You can get this ID in the section where you registered the SSH Key
+      - run:
+          name: Install dependencies
+          command: |
+            # install the dependencies needed for your playbook
+            apk add --update ansible 
+      - run:
+          name: Configure server
+          command: |
+            ansible-playbook -i inventory_files/inventory.txt main-remote.yml
+
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
-  create_infrastructure:
+  infrastructure:
     jobs:
       - create_infrastructure
+      - create_inv_file
+      - append_inv_file:
+          requires:
+            - create_infrastructure
+            - create_inv_file
+      - configure_infrastructure:
+          requires:
+            - create_infrastructure
+            - append_inv_file
