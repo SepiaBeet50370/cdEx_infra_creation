@@ -43,7 +43,7 @@ jobs:
           keys: 
             - "inventory file"
       - add_ssh_keys:
-          fingerprints: ["a7:2e:c8:cb:eb:a0:8e:23:32:36:bc:c5:cc:eb:3d:96"] # You can get this ID in the section where you registered the SSH Key
+          fingerprints: ["d2:c8:90:33:d1:e7:c0:dd:f7:e3:23:dd:cb:d1:d2:14"] # You can get this ID in the section where you registered the SSH Key
       - run:
           name: Install dependencies
           command: |
