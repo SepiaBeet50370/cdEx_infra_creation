@@ -1,2 +1,2 @@
 [all]
-ec2-44-211-183-122.compute-1.amazonaws.com
+44.211.183.122
