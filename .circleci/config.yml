@@ -20,11 +20,6 @@ jobs:
               --template-file template.yml \
               --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} \
               --region us-east-1
-
-  append_inv_file:
-    docker:
-      - image: amazon/aws-cli
-    steps:
       - run: 
             name: Append inventory file
             command: |
@@ -33,6 +28,20 @@ jobs:
           key: "inventory file"
           paths:
             - inventory.txt
+
+  # append_inv_file:
+  #   docker:
+  #     - image: amazon/aws-cli
+  #   steps:
+  #     - checkout
+  #     - run: 
+  #           name: Append inventory file
+  #           command: |
+  #             aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --output text >> inventory.txt
+  #     - save_cache:
+  #         key: "inventory file"
+  #         paths:
+  #           - inventory.txt
 
   configure_infrastructure: 
     docker:
@@ -43,7 +52,7 @@ jobs:
           keys: 
             - "inventory file"
       - add_ssh_keys:
-          fingerprints: ["d2:c8:90:33:d1:e7:c0:dd:f7:e3:23:dd:cb:d1:d2:14"] # You can get this ID in the section where you registered the SSH Key
+          fingerprints: ["22:19:d3:a5:70:ab:de:4e:f8:87:e6:23:45:2a:d6:b5:6a:58:39:08"] # You can get this ID in the section where you registered the SSH Key
       - run:
           name: Install dependencies
           command: |
@@ -60,9 +69,6 @@ workflows:
   infrastructure:
     jobs:
       - create_infrastructure
-      - append_inv_file:
-          requires:
-            - create_infrastructure
       - configure_infrastructure:
           requires:
-            - append_inv_file
+            - create_infrastructure
