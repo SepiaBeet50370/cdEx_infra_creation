@@ -23,11 +23,11 @@ jobs:
       - run: 
             name: Append inventory file
             command: |
-              aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --output text >> inventory.txt
+              aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --output text >> inventory2.txt
       - save_cache:
           key: "inventory file"
           paths:
-            - inventory.txt
+            - inventory2.txt
 
   # append_inv_file:
   #   docker:
@@ -52,7 +52,7 @@ jobs:
           keys: 
             - "inventory file"
       - add_ssh_keys:
-          fingerprints: ["22:19:d3:a5:70:ab:de:4e:f8:87:e6:23:45:2a:d6:b5:6a:58:39:08"] # You can get this ID in the section where you registered the SSH Key
+          fingerprints: ["58:52:48:0f:36:c5:40:e8:76:38:b2:86:92:2c:20:73"] # You can get this ID in the section where you registered the SSH Key
       - run:
           name: Install dependencies
           command: |
