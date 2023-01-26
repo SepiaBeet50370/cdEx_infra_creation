@@ -32,7 +32,7 @@ jobs:
           name: Install dependencies
           command: |
             # install the dependencies needed for your playbook
-            python -m pip install ansible
+            pip3 install ansible
       - run:
           name: Configure server
           command: |
