@@ -1,12 +1,8 @@
-# Use the latest 2.1 version of CircleCI pipeline process engine.
-# See: https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
 
 orbs:
   aws-cli: circleci/aws-cli@2.0.3
 
-# Define a job to be invoked later in a workflow.
-# See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
   create_infrastructure:
     docker:
@@ -27,7 +23,7 @@ jobs:
     steps:
       - checkout
       - add_ssh_keys:
-          fingerprints: ["58:52:48:0f:36:c5:40:e8:76:38:b2:86:92:2c:20:73"] # You can get this ID in the section where you registered the SSH Key
+          fingerprints: ["58:52:48:0f:36:c5:40:e8:76:38:b2:86:92:2c:20:73"]
       - run:
           name: Install dependencies
           command: |
@@ -38,10 +34,27 @@ jobs:
           command: |
             ansible-playbook -i inventory.txt main-remote.yml
 
-# Invoke jobs via workflows
-# See: https://circleci.com/docs/2.0/configuration-reference/#workflows
+  smoke_test:
+    docker:
+      - image: alpine:latest
+    steps:
+      - run: apk add --update curl
+      - run:
+          name: smoke test
+          command: |
+            URL="https://blog.udacity.com/"
+            # Test if website exists
+            if curl -s --head ${URL} 
+            then
+              return 0
+            else
+              return 1
+            fi
+
+
 workflows:
   infrastructure:
     jobs:
       #- create_infrastructure
-      - configure_infrastructure
+      #- configure_infrastructure
+      - smoke_test
