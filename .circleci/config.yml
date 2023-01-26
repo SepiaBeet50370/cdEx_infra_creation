@@ -25,7 +25,7 @@ jobs:
             command: |
               aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --output text >> inventory2.txt
       - save_cache:
-          key: "inventory file"
+          key: "inventory file2"
           paths:
             - inventory2.txt
 
@@ -50,7 +50,7 @@ jobs:
       - checkout
       - restore_cache:
           keys: 
-            - "inventory file"
+            - "inventory file2"
       - add_ssh_keys:
           fingerprints: ["58:52:48:0f:36:c5:40:e8:76:38:b2:86:92:2c:20:73"] # You can get this ID in the section where you registered the SSH Key
       - run:
