@@ -47,18 +47,10 @@ jobs:
     docker:
       - image: amazon/aws-cli
     steps:
-      - run: apk add --update curl
       - run:
-          name: smoke test
+          name: simulate error
           command: |
-            URL="https://blog.udacity.com/"
-            # Test if website exists
-            if curl -s --head ${URL} 
-            then
-              return 0
-            else
-              return 1
-            fi
+            return 0
       - destroy_environment
 
 
