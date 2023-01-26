@@ -20,37 +20,12 @@ jobs:
               --template-file template.yml \
               --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} \
               --region us-east-1
-      - run: 
-            name: Append inventory file
-            command: |
-              aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --output text >> inventory2.txt
-      - save_cache:
-          key: "inventory file2"
-          paths:
-            - inventory2.txt
-
-  # append_inv_file:
-  #   docker:
-  #     - image: amazon/aws-cli
-  #   steps:
-  #     - checkout
-  #     - run: 
-  #           name: Append inventory file
-  #           command: |
-  #             aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --output text >> inventory.txt
-  #     - save_cache:
-  #         key: "inventory file"
-  #         paths:
-  #           - inventory.txt
 
   configure_infrastructure: 
     docker:
       - image: python:3.7-alpine3.11
     steps:
       - checkout
-      - restore_cache:
-          keys: 
-            - "inventory file2"
       - add_ssh_keys:
           fingerprints: ["58:52:48:0f:36:c5:40:e8:76:38:b2:86:92:2c:20:73"] # You can get this ID in the section where you registered the SSH Key
       - run:
@@ -68,7 +43,5 @@ jobs:
 workflows:
   infrastructure:
     jobs:
-      - create_infrastructure
-      - configure_infrastructure:
-          requires:
-            - create_infrastructure
+      #- create_infrastructure
+      - configure_infrastructure
